@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- css loader -->
+  <link rel="stylesheet" href="loader_water.css">
+  <!-- js loader -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="loader_water.js"></script>
+
+
+</head>
+<body class="loading">
+  <div class="loader">
+    <h1>Elmirc𐌀n</h1>
+  </div>
+
+  <!-- Your page content -->
+  <section class="hidden-content">
+   <section>
+    <nav class="header-nav container flex-container" style="height: 200px">
+      <header>
+        <div class="header">
+          <h1 class="logo-link logo" ><a href="myapi.html">Elmirc𐌀n</a></h1>
+          <ol class="header-menu flex-container">
+            <li style="backdrop-filter: blur(15px);"><a href="Top.html">HOT!</a></li>
+            <li style="backdrop-filter: blur(15px);"><a href="wallet.html">Watchlist</a></li>
+            <li style="backdrop-filter: blur(15px);"><a href="flip.html">Flip</a></li>
+          </div>
+        </div>
+        <div class="header-background"></div>
+        <div style="padding: 50px">
+        </header>
+      </nav>
+      <div id="sol-volume" class="sol-volume">Volume: Loading...</div>
+      <div id="sol-price" class="sol-price">Sol: Loading...</div>
+      <h2>Wolf call Plz...</h2>
+      <img src="" id="img" alt="flex" style="margin: 0 auto 0; mix-blend-mode: soft-light; display: flex; transform: translate(10px, -30px);" onerror="this.onerror=null; this.src='https://source.unsplash.com/user/wsanter';this.style.width='600px'; this.style.height='300px'" loading="lazy">
+
+    </section>
+    <div class="container form-container">
+      <form action="" method="post">
+        <div class="row">
+          <div class="col-25">
+            <label for="fp">Name</label>
+          </div>
+          <div class="col-75">
+            <input type="text" id="name" name="name" placeholder="Enter the Name" autocomplete="off" >
+            <ul id="autocomplete-list"></ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-25">
+            <label for="fp">Fp</label>
+          </div>
+          <div class="col-75">
+            <input type="text" id="fp" name="fp" placeholder="Enter Fp value" autocomplete="off">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-25">
+            <label for="listed">Listed</label>
+          </div>
+          <div class="col-75">
+            <input type="text" id="listed" name="listed" placeholder="Enter Listed value" autocomplete="off">
+          </div>
+        </div>
+
+                            <!--           EP           -->
+
+        <div class="row">
+          <div class="col-25">
+            <label for="ep" id="open-popup">EP</label>
+          </div>
+
+            <div id="popup-container">
+              <div id="popup-box">
+                <iframe id="myIframe" style="border-radius: 5%; width: 100%; height: 100%" src="https://magiceden.io/marketplace/degods?activeTab=stats"></iframe>
+                <button id="close-popup" class="close-button" style="position: fixed;">X</button>
+                <div class="slider-container">
+                  <div id="range-slider"></div>
+                  <div class="slider-labels">
+                    <span>0</span>
+                    <span>25</span>
+                    <span>50</span>
+                    <span>75</span>
+                    <span>100</span>
+                  </div>
+                </div>
+                <div class="slider-container">
+                  <div id="range-slider-charts"></div>
+                  <div class="slider-labels">
+                    <span>0</span>
+                    <span>25</span>
+                    <span>50</span>
+                    <span>75</span>
+                    <span>100</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-75">
+              <input type="text" id="ep" name="ep" placeholder="Enter EP range" autocomplete="off">
+            </div>
+          </div>
+
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+          <script>
+            $(document).ready(function() {
+              $("#open-popup").on("click", function() {
+                $("#popup-container").show();
+                createRangeSlider();
+                createChartsSlider();
+              });
+
+              $("#close-popup").on("click", function() {
+                $("#popup-container").hide();
+              });
+
+              $(document).on("click", function(event) {
+                if ($(event.target).is("#popup-container")) {
+                  $("#popup-container").hide();
+                }
+              });
+
+              function createRangeSlider() {
+                  var fpValue = parseFloat($("#fp").val()); // Use parseFloat for non-integer values
+                  var offset = 2;
+                  var sliderValues = [fpValue - offset, fpValue + offset];
+
+                  var sliderOptions = {
+                    range: true,
+                    min: fpValue - offset,
+                    max: fpValue + offset,
+                    step: 0.1, // Set the step value to 0.1 for decimal increments
+                    values: sliderValues,
+                    slide: function(event, ui) {
+                      var selectedRange = ui.values[0] + " to " + ui.values[1];
+                      $("#ep").val(selectedRange);
+                      $("#range-slider .ui-slider-handle").eq(0).attr("data-value", ui.values[0]);
+                      $("#range-slider .ui-slider-handle").eq(1).attr("data-value", ui.values[1]);
+                    }
+                };
+
+                $("#range-slider").slider(sliderOptions);
+                $("#range-slider .ui-slider-handle").each(function(index) {
+                  $(this).attr("data-value", sliderOptions.values[index]);
+                });
+
+                $("#fp").on("input", function() {
+                    var fpValue = parseFloat($(this).val()); // Use parseFloat for non-integer values
+                    var sliderValues = [fpValue - offset, fpValue + offset];
+                    $("#range-slider").slider("option", {
+                      min: 0,
+                      max: 100,
+                      values: sliderValues
+                    });
+                    var selectedRange = sliderValues[0] + " to " + sliderValues[1];
+                    $("#ep").val(selectedRange);
+                });
+
+                $("#fp").trigger("input");
+              }
+
+              function createChartsSlider() {
+                var sliderOptions = {
+                  range: true,
+                  min: 0,
+                  max: 100,
+                  values: [40, 80],
+                  slide: function(event, ui) {
+                    var selectedRange = " RSI is above " + ui.values[0] + " and below " + ui.values[1] + ". ";
+                    $("#range-slider-charts .ui-slider-handle").eq(0).attr("data-value", ui.values[0]);
+                    $("#range-slider-charts .ui-slider-handle").eq(1).attr("data-value", ui.values[1]);
+                    $("#charts").val(selectedRange);
+                  }
+                };
+
+                $("#range-slider-charts").slider(sliderOptions);
+                $("#range-slider-charts .ui-slider-handle").each(function(index) {
+                  $(this).attr("data-value", sliderOptions.values[index]);
+                });
+              }
+
+              createRangeSlider();
+              createChartsSlider();
+            });
+
+
+          </script>
+
+                                <!--           EP           -->
+
+
+
+          <div class="row">
+            <div class="col-25">
+              <label for="risks">Risks</label>
+            </div>
+            <div class="col-75">
+              <textarea id="risks" name="risks" placeholder="Enter Risks" autocomplete=""></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="description">Project Description</label>
+            </div>
+            <div class="col-75">
+              <textarea id="description" name="description" placeholder="Enter Project Description" autocomplete="off"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="charts">Charts</label>
+            </div>
+            <div class="col-75">
+              <textarea type="text"  id="charts" name="charts" placeholder="Enter Charts" autocomplete="off"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-25">
+              <label for="links">Links</label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="links" name="links" placeholder="Enter Links">
+            </div>
+          </div>
+          <div class="row">
+            <button type="submit" onclick="updateIframe()">Submit</button>
+          </div>
+          </form>
+
+
+
+
+
+          <!-- Result show div -->
+
+          <div onclick="copyFormInputs()">
+            <h3 class="result">Results:</h3>
+
+            <p class="result1"> Name: <span id="result-name"></span></p>
+            <p class="result1">Fp value: <span id="result-fp"></span></p>
+            <p class="result1">Listed value: <span id="result-listed"></span></p>
+            <p class="result1">EP range: <span id="result-ep"></span></p>
+            <p class="result1">Risks: <span id="result-risks"></span></p>
+            <p class="result1">Project Description: <span id="result-description"></span></p>
+            <p class="result1">Charts: <span id="result-charts"></span></p>
+            <p class="result1">Link: <span id="result-links"></span></p>
+
+
+          </div>
+
+          <!-- Result show div -->
+
+
+  </div>
+  </div>
+</div>
+
+
+
+<!-- Pulling the fp out of name  -->
+
+<script src="auto.js"></script>
+
+<!-- Pulling the fp out of name  -->
+
+
+
+<!-- Sol and volume api  -->
+
+<script src="sol_and_volume_api.js"></script>
+
+<!-- Sol and volume api  -->
+
+
+<!-- Show result  -->
+
+<script src="result_show.js"></script>
+
+<!-- Show result  -->
+
+
+
+<button class="result" type=submit1 onclick="copyFormInputss()" style="margin-left:49% ">Result</button>
+
+
+<!-- Copy button -->
+
+<script src="copy_button.js"></script>
+
+<!-- Copy button -->
+    
+
+
+
+  <div class="footer">
+    © 2023 NFT Calling. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+  </div>
+
+
+</body>
+</html>

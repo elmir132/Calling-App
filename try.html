@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nft calling</title>
+   <link rel="shortcut icon" type="image/x-icon" href="logo_nft.png" />
+  <style>
+    #autocomplete-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      position: absolute;
+      width: 70%;
+      z-index: 1;
+      background-color: #fff;
+    }
+
+    #autocomplete-list li {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    #autocomplete-list li:hover {
+      background-color: #f9f9f9;
+    }
+
+    #autocomplete-list li.selected {
+      background-color: #e2e2e2;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="name" name="name" placeholder="Enter the Name" autocomplete="off">
+  <ul id="autocomplete-list"></ul>
+
+  <script>
+    function fetchCollections() {
+      const apiUrl = 'https://api-mainnet.magiceden.io/v2/collections';
+      const offset = 0;
+      const limit = 500;
+
+      fetch(`${apiUrl}?offset=${offset}&limit=${limit}`)
+        .then(response => response.json())
+        .then(data => {
+          const collections = data;
+          const collectionsMap = {};
+
+          collections.forEach(collection => {
+            const tagName = collection.name.trim().toLowerCase();
+            const tagSymbol = collection.symbol;
+            const listedCount = collection.listedCount;
+            collectionsMap[tagName] = {
+              symbol: tagSymbol,
+              listedCount: listedCount
+            };
+          });
+
+          const input = document.getElementById('name');
+          const autocompleteList = document.getElementById('autocomplete-list');
+          let selectedElementIndex = -1;
+          const suggestions = [];
+
+          input.addEventListener('input', function() {
+            const inputText = this.value.toLowerCase();
+            suggestions.length = 0;
+
+            Object.keys(collectionsMap).forEach(tagName => {
+              if (tagName.includes(inputText)) {
+                suggestions.push(tagName);
+              }
+            });
+
+            renderSuggestions();
+          });
+
+          function renderSuggestions() {
+            autocompleteList.innerHTML = '';
+
+            suggestions.forEach((tagName, index) => {
+              const listItem = document.createElement('li');
+              listItem.textContent = tagName;
+              listItem.addEventListener('mouseover', () => {
+                selectedElementIndex = index;
+                updateSelectedElement();
+              });
+              listItem.addEventListener('click', () => {
+                input.value = tagName;
+                autocompleteList.style.display = 'none';
+              });
+
+              autocompleteList.appendChild(listItem);
+            });
+
+            updateSelectedElement();
+            autocompleteList.style.display = suggestions.length ? 'block' : 'none';
+          }
+
+          function updateSelectedElement() {
+            const listItems = autocompleteList.querySelectorAll('li');
+            listItems.forEach((item, index) => {
+              item.classList.toggle('selected', index === selectedElementIndex);
+            });
+
+            scrollSelectedItemIntoView();
+          }
+
+          function scrollSelectedItemIntoView() {
+            const selectedItem = autocompleteList.querySelector('li.selected');
+            if (selectedItem) {
+              selectedItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }
+
+          input.addEventListener('keydown', e => {
+            if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              selectedElementIndex = Math.max(selectedElementIndex - 1, 0);
+              updateSelectedElement();
+            } else if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              selectedElementIndex = Math.min(selectedElementIndex + 1, suggestions.length - 1);
+              updateSelectedElement();
+            } else if (e.key === 'Enter') {
+              e.preventDefault();
+              if (selectedElementIndex !== -1) {
+                const selectedTagName = suggestions[selectedElementIndex];
+                input.value = selectedTagName;
+                autocompleteList.style.display = 'none';
+              }
+            }
+          });
+
+          input.addEventListener('blur', function() {
+            setTimeout(() => {
+              autocompleteList.style.display = 'none';
+            }, 200);
+          });
+        })
+        .catch(error => console.error(error));
+    }
+
+    fetchCollections();
+  </script>
+</body>
+</html>
